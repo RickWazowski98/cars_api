@@ -1,10 +1,26 @@
-
 {% extends 'base.html' %}
 {% block title %}
     Cars
 {% endblock title %}
 {% block content %}
 <h1>Cars</h1>
+        <div>
+        <h5>Filters: </h5>
+            <form action="/client/search_by/" method="POST" class="form-inline">
+                <div class="form-group">
+                    <label for="category">Category: </label>
+                    <select size="1" name="category" class="form-control" id="exampleFormControlSelect1">
+                        <option disabled>Choice category</option>
+                        {% for key in keys %}
+                            <option>{{key}}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="value">Value: </label>
+                    <input type="text" name="value" class="form-control">
+                    <p><input type="submit" value="Applay filters" class="btn btn-warning"></p>
+                </div>
+            </form>
+        </div>
         {% for car in cars %}
             <div class="col-md-6">
                 <strong><h1><a href="/client/{{car.VIM}}">{{car.manufacturer}} {{car.model}}</a></h1><strong>

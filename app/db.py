@@ -1,5 +1,5 @@
 import pymongo
-# datas = {"manufacturer":"HAMMER","model":"NONE","year_of_issue":"2010","colour":"Grey","VIM":"0004"}
+
 
 class Db():
     def __init__(self):
@@ -18,15 +18,6 @@ class Db():
     def update_document(self, query_elements, new_value):
         self.collection.update_one(query_elements, {'$set': new_value})
 
-    def find_document(self, elements, multiple=False):
-        if multiple:
-            result = self.collection.find(elements)
-            return [r for r in result]
-        else:
-            return self.collection.find_one(elements)
-
     def show_documents(self):
-        result = self.collection.find({},{"_id":0})
+        result = self.collection.find({}, {"_id": 0})
         return [r for r in result]
-
-# Db().insert_document(datas)

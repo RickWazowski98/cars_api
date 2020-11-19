@@ -1,5 +1,4 @@
 from aiohttp import web
-from bson import json_util
 import json
 import aiohttp_jinja2
 
@@ -49,14 +48,14 @@ async def delete_car(request):
 @routes.get('/api/search_by/{key}={value}')
 async def search_car_by(request):
     search_query = {str(request.match_info['key']): str(request.match_info['value'])}
-    search_result = Db().collection.find(search_query, {"_id":0})
+    search_result = Db().collection.find(search_query, {"_id": 0})
     return web.Response(text=str(json.dumps([r for r in search_result], indent=4)), status=200)
 
 
 @routes.get('/client/')
 @aiohttp_jinja2.template('cars_list.html')
 async def client_cars_list(request):
-    context = {"cars": Db().show_documents()}
+    context = {"cars": Db().show_documents(), "keys": list(Db().show_documents()[0].keys())}
     return context
 
 
@@ -65,6 +64,16 @@ async def client_cars_list(request):
 async def client_delete_car(request):
     Db().collection.delete_one({"VIM": request.match_info['vim']})
     context = {"vim": request.match_info['vim']}
+    return context
+
+
+@routes.post('/client/search_by/')
+@aiohttp_jinja2.template('search_result.html')
+async def client_filter(request):
+    data = await request.post()
+    search_query = {str(data['category']): str(data['value'])}
+    search_result = Db().collection.find(search_query, {"_id": 0})
+    context = {"cars": [r for r in search_result]}
     return context
 
 
@@ -86,18 +95,19 @@ class AddCarView(web.View):
     async def get(self):
         return self.request
 
+
 @routes.view('/client/{vim}')
 @aiohttp_jinja2.template('car_detail.html')
 class CarDetailView(web.View):
 
     async def get(self):
-        car_info = Db().collection.find_one({"VIM":self.request.match_info['vim']},{"_id":0})
+        car_info = Db().collection.find_one({"VIM":self.request.match_info['vim']}, {"_id": 0})
         context = {"car": car_info}
         return context
 
     async def post(self):
         data = await self.request.post()
-        car_info = Db().collection.find_one({"VIM":self.request.match_info['vim']},{"_id":0})
+        car_info = Db().collection.find_one({"VIM":self.request.match_info['vim']}, {"_id": 0})
         context = {
             "car": car_info,
             "vim": self.request.match_info['vim']
@@ -109,7 +119,7 @@ class CarDetailView(web.View):
             "colour": data['colour'],
             "VIM": data['VIM'],
         }
-        Db().update_document({"VIM":data['VIM']}, j_data)
+        Db().update_document({"VIM": data['VIM']}, j_data)
         return context
 
 
@@ -118,7 +128,7 @@ class CarDetailView(web.View):
 class ChangeCarInfo(web.View):
 
     async def get(self):
-        car_info = Db().collection.find_one({"VIM":self.request.match_info['vim']},{"_id":0})
+        car_info = Db().collection.find_one({"VIM":self.request.match_info['vim']}, {"_id": 0})
         context = {
             "car": car_info,
             "vim": self.request.match_info['vim']
