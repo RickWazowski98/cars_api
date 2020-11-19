@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}
+    Car detail
+{% endblock title %}
+{% block content %}
+    <div class="col-md-4">
+        <h3>Car detail</h3>
+        <p><strong>Manufacturer: </strong>{{car.manufacturer}}</p>
+        <p><strong>Model: </strong>{{car.model}}</p>
+        <p><strong>Year of issue: </strong>{{car.year_of_issue}}</p>
+        <p><strong>Colour: </strong>{{car.colour}}</p>
+        <p><strong>VIM: </strong>{{car.VIM}}</p>
+        <button type="button" class="btn btn-warning"><a href="/client/change_info/{{car.VIM}}">Change info</a></button>
+        <form action="/client/delete/{{car.VIM}}" method="DELETE">
+            <button type="submit" class="btn btn-warning">Delete</button>
+        </form>
+    </div>
+{% endblock content %}
